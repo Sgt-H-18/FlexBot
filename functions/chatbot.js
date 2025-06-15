@@ -29,15 +29,14 @@ Voici la question de l’utilisateur : ${message}
     });
 
     const data = await response.json();
-
-    if (!data.choices || !data.choices[0]) {
-      console.error("❌ Réponse OpenAI inattendue :", data);
-      return {
-        statusCode: 502,
-        body: JSON.stringify({ reply: "❌ Problème lors de la réponse d'OpenAI." })
-      };
-    }
-
+    
+if (!data.choices || !data.choices[0]) {
+  console.error("❌ Réponse OpenAI inattendue :", JSON.stringify(data));
+  return {
+    statusCode: 502,
+    body: JSON.stringify({ reply: "❌ Réponse OpenAI inattendue. Consultez les logs Netlify." })
+  };
+}
     return {
       statusCode: 200,
       body: JSON.stringify({ reply: data.choices[0].message.content })
