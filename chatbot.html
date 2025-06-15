@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FlexBot – Assistant IA Flex&Steel</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #fff8f8;
+      padding: 2rem;
+    }
+    #chatbox {
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+    .message {
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+    }
+    .user {
+      text-align: right;
+      color: #d6336c;
+    }
+    .bot {
+      text-align: left;
+      color: #444;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div id="chatbox">
+    <h2>🤖 FlexBot</h2>
+    <div id="messages"></div>
+    <form id="chat-form">
+      <input type="text" id="user-input" placeholder="Posez votre question à FlexBot..." required />
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('user-input');
+    const messages = document.getElementById('messages');
+
+    function addMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.className = `message ${sender}`;
+      msg.textContent = sender === 'bot' ? `🤖 FlexBot : ${text}` : text;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userText = input.value;
+      addMessage(userText, 'user');
+      input.value = '';
+
+      try {
+        const response = await fetch('/.netlify/functions/chatbot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: userText })
+        });
+        const data = await response.json();
+        addMessage(data.reply, 'bot');
+      } catch (err) {
+        addMessage("❌ FlexBot ne parvient pas à répondre.", 'bot');
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
