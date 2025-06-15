@@ -1,7 +1,15 @@
 // functions/chatbot.js
-export async function handler(event) {
-  const { message } = JSON.parse(event.body);
 
+export async function handler(event) {
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("❌ Clé API OpenAI manquante");
+    return {
+      statusCode: 500,
+      body: "Clé API non trouvée"
+    };
+  }
+
+  const { message } = JSON.parse(event.body);
   const prompt = `
 Tu es FlexBot, l'assistant IA officiel de Flex&Steel, un collectif de studios de pole dance et d’arts aériens situé à Reims, Charleville et Sedan.
 
